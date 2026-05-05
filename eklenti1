@@ -1,8 +1,8 @@
 // Kullanılacak rastgele sosis görselleri
 const sosisResimleri = [
     "http://i.pinimg.com/736x/fe/cf/51/fecf51eacb5d3a27aef0bae7811689fc.jpg", // Sosisli
-    "https://unsplash.com", // Izgara sosis
-    "https://unsplash.com"  // Sosis tabağı
+    "http://i.pinimg.com/736x/fe/cf/51/fecf51eacb5d3a27aef0bae7811689fc.jpg", // Izgara sosis
+    "http://i.pinimg.com/736x/fe/cf/51/fecf51eacb5d3a27aef0bae7811689fc.jpg"  // Sosis tabağı
 ];
 
 function sosisle(node) {
