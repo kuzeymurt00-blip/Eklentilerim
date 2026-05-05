@@ -1,0 +1,39 @@
+/**
+ * Sayfadaki metinleri "sosis" yapan ana fonksiyon
+ */
+function sosisle(node) {
+    // Sadece metin düğümlerini hedefle
+    if (node.nodeType === Node.TEXT_NODE) {
+        // Kelimeleri bul ve sosis ile değiştir (büyük/küçük harf uyumu korunmaz)
+        const yeniMetin = node.textContent.replace(/[a-zA-ZçÇğĞıİöÖşŞüÜ0-9]+/g, 'sosis');
+        
+        // Eğer metin gerçekten değiştiyse güncelle (sonsuz döngüyü önlemek için)
+        if (node.textContent !== yeniMetin) {
+            node.textContent = yeniMetin;
+        }
+    } else {
+        // Kod ve stil dosyalarını sosisleme
+        const excludeTags = ['SCRIPT', 'STYLE', 'NOSCRIPT', 'TEXTAREA', 'INPUT'];
+        if (!excludeTags.includes(node.tagName)) {
+            node.childNodes.forEach(sosisle);
+        }
+    }
+}
+
+// 1. Sayfa yüklendiğinde mevcut her şeyi sosis yap
+sosisle(document.body);
+
+// 2. Sayfaya sonradan eklenen (AJAX, Scroll vb.) içerikleri de yakala
+const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+        mutation.addedNodes.forEach((node) => {
+            sosisle(node);
+        });
+    });
+});
+
+// Dinlemeyi başlat
+observer.observe(document.body, {
+    childList: true,
+    subtree: true
+});
