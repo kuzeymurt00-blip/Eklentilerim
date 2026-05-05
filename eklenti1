@@ -1,18 +1,29 @@
-/**
- * Sayfadaki metinleri "sosis" yapan ana fonksiyon
- */
+// Kullanılacak rastgele sosis görselleri
+const sosisResimleri = [
+    "http://i.pinimg.com/736x/fe/cf/51/fecf51eacb5d3a27aef0bae7811689fc.jpg", // Sosisli
+    "https://unsplash.com", // Izgara sosis
+    "https://unsplash.com"  // Sosis tabağı
+];
+
 function sosisle(node) {
-    // Sadece metin düğümlerini hedefle
+    // 1. METİNLERİ SOSİSLE
     if (node.nodeType === Node.TEXT_NODE) {
-        // Kelimeleri bul ve sosis ile değiştir (büyük/küçük harf uyumu korunmaz)
         const yeniMetin = node.textContent.replace(/[a-zA-ZçÇğĞıİöÖşŞüÜ0-9]+/g, 'sosis');
-        
-        // Eğer metin gerçekten değiştiyse güncelle (sonsuz döngüyü önlemek için)
         if (node.textContent !== yeniMetin) {
             node.textContent = yeniMetin;
         }
-    } else {
-        // Kod ve stil dosyalarını sosisleme
+    } 
+    // 2. GÖRSELLERİ SOSİSLE
+    else if (node.tagName === 'IMG') {
+        const rastgeleSosis = sosisResimleri[Math.floor(Math.random() * sosisResimleri.length)];
+        // Sonsuz döngüyü önlemek için zaten sosis olanları atla
+        if (!sosisResimleri.includes(node.src)) {
+            node.src = rastgeleSosis;
+            node.srcset = ""; // Yüksek çözünürlüklü alternatifleri temizle
+        }
+    }
+    // 3. ALT ÖĞELERİ KONTROL ET
+    else {
         const excludeTags = ['SCRIPT', 'STYLE', 'NOSCRIPT', 'TEXTAREA', 'INPUT'];
         if (!excludeTags.includes(node.tagName)) {
             node.childNodes.forEach(sosisle);
@@ -20,20 +31,14 @@ function sosisle(node) {
     }
 }
 
-// 1. Sayfa yüklendiğinde mevcut her şeyi sosis yap
+// İlk çalıştırma
 sosisle(document.body);
 
-// 2. Sayfaya sonradan eklenen (AJAX, Scroll vb.) içerikleri de yakala
+// Sayfaya yeni eklenen içerikleri (fotoğraflar dahil) izle
 const observer = new MutationObserver((mutations) => {
     mutations.forEach((mutation) => {
-        mutation.addedNodes.forEach((node) => {
-            sosisle(node);
-        });
+        mutation.addedNodes.forEach((node) => sosisle(node));
     });
 });
 
-// Dinlemeyi başlat
-observer.observe(document.body, {
-    childList: true,
-    subtree: true
-});
+observer.observe(document.body, { childList: true, subtree: true });
